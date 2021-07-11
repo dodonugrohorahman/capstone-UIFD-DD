@@ -108,9 +108,16 @@ def index():
     result3 = str(figdata_png)[2:-1]
 
     ## Buatlah sebuah plot yang menampilkan insight di dalam data 
-    df2_sold = df2[['Category','Price']].groupby('Category').sum().sort_values(by='Price',ascending=False)
-    df2_sold.reset_index(inplace = True)
-    df2_sold.iloc[:10].plot.bar(x = 'Category', y = 'Price', color = 'salmon', title = 'Top 10 Sold Products By Price')
+    df2_sold = df2[['Category','Price']].groupby('Category').agg(
+    {'Price':'sum'}).rename({'Price':'Total'}, axis=1).sort_values('Total',ascending=False).reset_index()
+    df3_sold = df2_sold[:10].sort_values('Total',ascending=True)
+    X = df3_sold['Category']
+    Y = df3_sold['Total']
+    my_colors = 'rgbkymc'
+    fig = plt.figure(figsize=(8,3),dpi=300)
+    fig.add_subplot()
+    # bagian ini digunakan untuk membuat bar plot
+    plt.barh(X,Y, color=my_colors)
     plt.savefig('new_plot.png',bbox_inches="tight")
 
     figfile = BytesIO()
